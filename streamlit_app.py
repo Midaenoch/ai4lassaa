@@ -21,7 +21,7 @@ selected_features = [
        'Abdominal_Pain', 'Facial_Swelling', 'Bleeding', 'Low_Blood_Pressure',
        'Hearing_Loss', 'Seizures', 'Tremors', 'Disorientation', 'Coma',
        'Shock', 'Pregnant', 'Hospitalized', 'Duration_of_Symptoms', 'Outcome',
-       'Severity'
+       'Severity', 'Outcome'
 ]
 
 # 1. File upload
