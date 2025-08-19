@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 
 # Load model and scaler
-with open("svmmm_model.pkl", "rb") as f:
+with open("svmmi_model.pkl", "rb") as f:
     model = pickle.load(f)
 
 with open("scaller.pkl", "rb") as f:
@@ -21,7 +21,7 @@ selected_features = [
        'Abdominal_Pain', 'Facial_Swelling', 'Bleeding', 'Low_Blood_Pressure',
        'Hearing_Loss', 'Seizures', 'Tremors', 'Disorientation', 'Coma',
        'Shock', 'Pregnant', 'Hospitalized', 'Duration_of_Symptoms', 'Outcome',
-       'Severity', 'Outcome'
+       'Severity'
 ]
 
 # 1. File upload
