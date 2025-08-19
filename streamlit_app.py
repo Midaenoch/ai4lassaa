@@ -15,12 +15,13 @@ st.markdown("Upload your data file (CSV or Excel) or manually input data to pred
 
 # Define expected features
 selected_features = [
-    'Cases', 'Any_Confirmed_Cases', 'Reports_All', 'LGA_Mean_Cases',
-    'Cases_SuspectedUnconfirmed', 'Year', 'NumDiagCentres', 'LabDist',
-    'Source', 'TotalPopulation_ByYear', 'LabTravelTime', 'AgriProp_ESA',
-    'ForestProp_ESA', 'UrbanProp_ESA', 'TempMeanAnnual_201119_NOAA',
-    'CHELSA_PrecipTotalAnnual', 'TotalRuralPop2015', 'CHELSA_TempAnnualMean',
-    'CHELSA_PrecipWettestQ'
+   'ID', 'State', 'LGA', 'Month', 'Year', 'Age', 'Gender', 'Fever',
+       'Headache', 'Weakness', 'Malaise', 'Sore_Throat', 'Muscle_Pain',
+       'Chest_Pain', 'Cough', 'Nausea', 'Vomiting', 'Diarrhea',
+       'Abdominal_Pain', 'Facial_Swelling', 'Bleeding', 'Low_Blood_Pressure',
+       'Hearing_Loss', 'Seizures', 'Tremors', 'Disorientation', 'Coma',
+       'Shock', 'Pregnant', 'Hospitalized', 'Duration_of_Symptoms', 'Outcome',
+       'Severity'
 ]
 
 # 1. File upload
