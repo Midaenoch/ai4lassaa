@@ -10,6 +10,9 @@ with open("svmmj_model.pkl", "rb") as f:
 with open("scallerj.pkl", "rb") as f:
     scaler = pickle.load(f)
 
+with open("label_encoders.pkl", "rb") as f:
+    label_encoders = pickle.load(f)
+
 st.title("🧪 AI4Lassa Fever Outbreak Prediction App")
 st.markdown("Upload your data file (CSV or Excel) or manually input data to predict potential Lassa Fever outbreaks.")
 
