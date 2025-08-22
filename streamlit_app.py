@@ -20,8 +20,7 @@ selected_features = [
        'Chest_Pain', 'Cough', 'Nausea', 'Vomiting', 'Diarrhea',
        'Abdominal_Pain', 'Facial_Swelling', 'Bleeding', 'Low_Blood_Pressure',
        'Hearing_Loss', 'Seizures', 'Tremors', 'Disorientation', 'Coma',
-       'Shock', 'Pregnant', 'Hospitalized', 'Duration_of_Symptoms', 'Outcome',
-       'Severity'
+       'Shock', 'Pregnant', 'Hospitalized', 'Duration_of_Symptoms', 'Severity'
 ]
 
 # 1. File upload
