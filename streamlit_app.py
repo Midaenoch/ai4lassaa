@@ -8,7 +8,7 @@ import seaborn as sns
 # Load Model + Scaler + Encoders
 # -----------------------
 model = joblib.load("svmmj_model.pkl")
-scaler = joblib.load("scalljer.pkl")
+scaler = joblib.load("scallerj.pkl")
 label_encoders = joblib.load("label_encoders.pkl")
 
 # Features used during training
