@@ -28,7 +28,7 @@ st.markdown('<div class="subtitle">Upload patient data to predict Lassa fever ou
 
 # Sidebar
 st.sidebar.title("ℹ️ About")
-st.sidebar.info("This app uses a trained SVM model to predict **Lassa fever outcomes** "
+st.sidebar.info("This app uses a trained AI model to predict **Lassa fever outcomes** "
                 "based on clinical and demographic features.")
 
 # Upload CSV
