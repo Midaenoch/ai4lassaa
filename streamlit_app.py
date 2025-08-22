@@ -1,86 +1,97 @@
 import streamlit as st
-import pickle
-import numpy as np
 import pandas as pd
+import joblib
 
-# Load model, scaler, and label encoders
-with open("svmmj_model.pkl", "rb") as f:
-    model = pickle.load(f)
+# Load trained model and encoders
+model = joblib.load("lassa_model.pkl")
+scaler = joblib.load("scaler.pkl")
+label_encoders = joblib.load("label_encoders.pkl")
 
-with open("scallerj.pkl", "rb") as f:
-    scaler = pickle.load(f)
-
-with open("label_encoders.pkl", "rb") as f:
-    label_encoders = pickle.load(f)
-
-st.title("🧪 AI4Lassa Fever Outbreak Prediction App")
-st.markdown("Upload your data file (CSV or Excel) or manually input data to predict potential Lassa Fever outbreaks.")
-
-# Define expected features
-selected_features = [
-   'ID', 'State', 'LGA', 'Month', 'Year', 'Age', 'Gender', 'Fever',
-   'Headache', 'Weakness', 'Malaise', 'Sore_Throat', 'Muscle_Pain',
-   'Chest_Pain', 'Cough', 'Nausea', 'Vomiting', 'Diarrhea',
-   'Abdominal_Pain', 'Facial_Swelling', 'Bleeding', 'Low_Blood_Pressure',
-   'Hearing_Loss', 'Seizures', 'Tremors', 'Disorientation', 'Coma',
-   'Shock', 'Pregnant', 'Hospitalized', 'Duration_of_Symptoms', 'Severity'
-]
+st.title("🦠 AI4Lassa Outbreak Prediction System")
 
 # File upload
-uploaded_file = st.file_uploader("📤 Upload CSV or Excel file", type=["csv", "xlsx"])
+uploaded_file = st.file_uploader("Upload a CSV file", type=["csv"])
 
-# Manual input placeholder (optional for later UI form)
-manual_input = {}
+if uploaded_file is not None:
+    # =======================
+    # FILE UPLOAD MODE
+    # =======================
+    data = pd.read_csv(uploaded_file)
 
-if st.button("Predict"):
-    try:
-        if uploaded_file is not None:
-            # Read file
-            if uploaded_file.name.endswith('.csv'):
-                df = pd.read_csv(uploaded_file)
-            else:
-                df = pd.read_excel(uploaded_file)
+    # Encode categorical features using fitted encoders
+    for col, le in label_encoders.items():
+        if col in data.columns:
+            data[col] = le.transform(data[col])
 
-            # Validate required columns
-            missing_cols = [col for col in selected_features if col not in df.columns]
-            if missing_cols:
-                st.error(f"Missing columns: {', '.join(missing_cols)}")
-                st.stop()
+    # Scale features
+    X_scaled = scaler.transform(data)
 
-            input_data = df[selected_features].copy()
+    # Predict
+    predictions = model.predict(X_scaled)
 
-        else:
-            input_data = pd.DataFrame([manual_input])
+    # Add results to dataframe
+    data["Prediction"] = predictions
 
-        # 🔑 Encode categorical features using saved label encoders
+    # Decode back to readable values
+    for col, le in label_encoders.items():
+        if col in data.columns:
+            data[col] = le.inverse_transform(data[col])
+
+    st.subheader("📊 Prediction Results (Uploaded CSV)")
+    st.dataframe(data)
+
+    # Download button
+    csv = data.to_csv(index=False).encode("utf-8")
+    st.download_button(
+        label="Download Predictions as CSV",
+        data=csv,
+        file_name="lassa_predictions.csv",
+        mime="text/csv"
+    )
+
+else:
+    # =======================
+    # MANUAL ENTRY MODE
+    # =======================
+    st.subheader("📝 Enter Case Data Manually")
+
+    # Dropdown options from encoders
+    state_options = label_encoders["State"].classes_
+    lga_options = label_encoders["LGA"].classes_
+    gender_options = label_encoders["Gender"].classes_
+    severity_options = label_encoders["Severity"].classes_
+    outcome_options = label_encoders["Outcome"].classes_
+
+    # Form inputs
+    state = st.selectbox("Select State", state_options)
+    lga = st.selectbox("Select LGA", lga_options)
+    gender = st.selectbox("Select Gender", gender_options)
+    severity = st.selectbox("Select Severity", severity_options)
+    outcome = st.selectbox("Select Outcome", outcome_options)
+    age = st.number_input("Age", min_value=0, max_value=120, step=1)
+    cases = st.number_input("Number of Cases", min_value=0, step=1)
+
+    # Submit button
+    if st.button("Predict Outbreak Risk"):
+        input_data = pd.DataFrame([{
+            "State": state,
+            "LGA": lga,
+            "Gender": gender,
+            "Severity": severity,
+            "Outcome": outcome,
+            "Age": age,
+            "Cases": cases
+        }])
+
+        # Encode categorical features
         for col, le in label_encoders.items():
             if col in input_data.columns:
-                try:
-                    input_data[col] = le.transform(input_data[col])
-                except ValueError as e:
-                    st.error(f"Encoding failed for column {col}: {e}")
-                    st.stop()
+                input_data[col] = le.transform(input_data[col])
 
-        # Scale numeric features
-        scaled_input = scaler.transform(input_data)
+        # Scale features
+        X_scaled = scaler.transform(input_data)
 
-        # Make predictions
-        predictions = model.predict(scaled_input)
+        # Predict
+        prediction = model.predict(X_scaled)[0]
 
-        # Add results
-        input_data["Prediction"] = predictions
-        input_data["Status"] = input_data["Prediction"].apply(lambda x: "🦠 Outbreak" if x == 1 else "✅ No Outbreak")
-        input_data["Recommendation"] = input_data["Prediction"].apply(
-            lambda x: "Alert Health Authorities" if x == 1 else "Continue Monitoring"
-        )
-
-        # Display results
-        st.markdown("### 📊 Prediction Results")
-        st.dataframe(input_data[["State", "Status", "Recommendation"]])
-
-        # Download button
-        csv = input_data.to_csv(index=False).encode('utf-8')
-        st.download_button("📥 Download Results as CSV", data=csv, file_name="lassa_predictions.csv", mime="text/csv")
-
-    except Exception as e:
-        st.error(f"Prediction failed: {e}")
+        st.success(f"Predicted Outbreak Risk: **{prediction}**")
