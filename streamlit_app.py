@@ -5,10 +5,13 @@ import time
 from sklearn.preprocessing import StandardScaler
 
 # Load the trained model and scaler
-with open("model.pkl", "rb") as f:
+with open("Svmmj_model.pkl", "rb") as f:
     model = pickle.load(f)
 
-with open("scaler.pkl", "rb") as f:
+with open("scallerj.pkl", "rb") as f:
+    scaler = pickle.load(f)
+
+with open("label_encoders.pkl", "rb") as f:
     scaler = pickle.load(f)
 
 st.set_page_config(page_title="AI4Lassa Outbreak Prediction", layout="wide")
