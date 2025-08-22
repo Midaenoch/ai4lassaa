@@ -4,10 +4,10 @@ import numpy as np
 import pandas as pd
 
 # Load model and scaler
-with open("svmmi_model.pkl", "rb") as f:
+with open("svmmj_model.pkl", "rb") as f:
     model = pickle.load(f)
 
-with open("scaller.pkl", "rb") as f:
+with open("scallerj.pkl", "rb") as f:
     scaler = pickle.load(f)
 
 st.title("🧪 AI4Lassa Fever Outbreak Prediction App")
