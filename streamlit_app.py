@@ -3,8 +3,8 @@ import pandas as pd
 import joblib
 
 # Load trained model and encoders
-model = joblib.load("lassa_model.pkl")
-scaler = joblib.load("scaler.pkl")
+model = joblib.load("svmmj_model.pkl")
+scaler = joblib.load("scallerj.pkl")
 label_encoders = joblib.load("label_encoders.pkl")
 
 st.title("🦠 AI4Lassa Outbreak Prediction System")
