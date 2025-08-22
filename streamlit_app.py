@@ -3,7 +3,7 @@ import pickle
 import numpy as np
 import pandas as pd
 
-# Load model and scaler
+# Load model, scaler, and label encoders
 with open("svmmj_model.pkl", "rb") as f:
     model = pickle.load(f)
 
@@ -19,23 +19,23 @@ st.markdown("Upload your data file (CSV or Excel) or manually input data to pred
 # Define expected features
 selected_features = [
    'ID', 'State', 'LGA', 'Month', 'Year', 'Age', 'Gender', 'Fever',
-       'Headache', 'Weakness', 'Malaise', 'Sore_Throat', 'Muscle_Pain',
-       'Chest_Pain', 'Cough', 'Nausea', 'Vomiting', 'Diarrhea',
-       'Abdominal_Pain', 'Facial_Swelling', 'Bleeding', 'Low_Blood_Pressure',
-       'Hearing_Loss', 'Seizures', 'Tremors', 'Disorientation', 'Coma',
-       'Shock', 'Pregnant', 'Hospitalized', 'Duration_of_Symptoms', 'Severity'
+   'Headache', 'Weakness', 'Malaise', 'Sore_Throat', 'Muscle_Pain',
+   'Chest_Pain', 'Cough', 'Nausea', 'Vomiting', 'Diarrhea',
+   'Abdominal_Pain', 'Facial_Swelling', 'Bleeding', 'Low_Blood_Pressure',
+   'Hearing_Loss', 'Seizures', 'Tremors', 'Disorientation', 'Coma',
+   'Shock', 'Pregnant', 'Hospitalized', 'Duration_of_Symptoms', 'Severity'
 ]
 
-# 1. File upload
+# File upload
 uploaded_file = st.file_uploader("📤 Upload CSV or Excel file", type=["csv", "xlsx"])
 
-# 2. Manual fallback
+# Manual input placeholder (optional for later UI form)
 manual_input = {}
 
 if st.button("Predict"):
     try:
         if uploaded_file is not None:
-            # Read file using pandas
+            # Read file
             if uploaded_file.name.endswith('.csv'):
                 df = pd.read_csv(uploaded_file)
             else:
@@ -52,21 +52,29 @@ if st.button("Predict"):
         else:
             input_data = pd.DataFrame([manual_input])
 
-        # Make predictions
+        # 🔑 Encode categorical features using saved label encoders
+        for col, le in label_encoders.items():
+            if col in input_data.columns:
+                try:
+                    input_data[col] = le.transform(input_data[col])
+                except ValueError as e:
+                    st.error(f"Encoding failed for column {col}: {e}")
+                    st.stop()
+
+        # Scale numeric features
         scaled_input = scaler.transform(input_data)
+
+        # Make predictions
         predictions = model.predict(scaled_input)
 
-        # Add prediction info
+        # Add results
         input_data["Prediction"] = predictions
         input_data["Status"] = input_data["Prediction"].apply(lambda x: "🦠 Outbreak" if x == 1 else "✅ No Outbreak")
         input_data["Recommendation"] = input_data["Prediction"].apply(
             lambda x: "Alert Health Authorities" if x == 1 else "Continue Monitoring"
         )
 
-        # Optional state label
-        input_data.insert(0, "State", [f"State {i+1}" for i in range(len(input_data))])
-
-        # Display table
+        # Display results
         st.markdown("### 📊 Prediction Results")
         st.dataframe(input_data[["State", "Status", "Recommendation"]])
 
