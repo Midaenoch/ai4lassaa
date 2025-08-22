@@ -5,7 +5,7 @@ import time
 from sklearn.preprocessing import StandardScaler
 
 # Load the trained model and scaler
-with open("Svmmj_model.pkl", "rb") as f:
+with open("svmmj_model.pkl", "rb") as f:
     model = pickle.load(f)
 
 with open("scallerj.pkl", "rb") as f:
