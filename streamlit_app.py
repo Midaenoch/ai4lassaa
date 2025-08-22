@@ -12,7 +12,7 @@ with open("scallerj.pkl", "rb") as f:
     scaler = pickle.load(f)
 
 with open("label_encoders.pkl", "rb") as f:
-    scaler = pickle.load(f)
+    label_encoders= pickle.load(f)
 
 st.set_page_config(page_title="AI4Lassa Outbreak Prediction", layout="wide")
 
